@@ -1,0 +1,22 @@
+{
+  "name": "spacetrader",
+  "version": "1.0.0",
+  "description": "Hmmmmmm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dittoslash/spacetrader.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dittoslash/spacetrader/issues"
+  },
+  "homepage": "https://github.com/dittoslash/spacetrader#readme",
+  "devDependencies": {
+    "coffee": "^4.1.0"
+  }
+}
