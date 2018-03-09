@@ -4,14 +4,20 @@ game =
   fuel: 10
   fuelmax: 10
   range: 5
-  cargo: ["Food"] #strings basically
-  cargomax: 5
+  cargo: [] #strings basically
+  cargomax: 8
+  cr: 200
+
 
 draw = null
 
 this_station = -> data.stations[game.location]
 
-distance_to = (there) ->
+rnd = (min, max, dp=0) -> #Generate a random integer between min and max with dp decimal points.
+  dec = 1
+  dec = Math.pow(10, dp) unless dp == 0
+  min + Math.floor(Math.random() * max)
+distance_to = (there) -> #Calculate the distance to a station. Accepts station object or ID.
   here = this_station()
   there = data.stations[there] unless there.name
   x1 = here.x
@@ -19,20 +25,44 @@ distance_to = (there) ->
   y1 = here.y
   y2 = there.y
   Math.round(Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2))*100)/100
-move_to = (there) ->
+move_to = (there) -> #Move to a station and consumes fuel. Accepts station ID.
   game.fuel -= distance_to there
   game.location = there #ids only ree
   display()
-refuel = ->
+refuel = -> #Refuels ship (currently for free.)
   game.fuel = game.fuelmax
   display()
-ditch = (id) ->
+ditch = (id) -> #Ditches cargo. Accepts location of cargo in game.cargo.
   game.cargo.pop(id)
   display()
+buy = (cn) -> #Buys cargo. Accepts name of commodity.
+  game.cr -= this_station().commv[cn]
+  game.cargo.push(cn)
+  display()
+sell = (cn) -> #Sells cargo. Accepts name of commodity.
+  game.cargo.splice(game.cargo.indexOf(cn), 1)
+  game.cr += this_station().commv[cn]
+  display()
+
+
+gen_comv = -> #Generate commodity values.
+  for st in data.stations
+    for cn in Object.keys(data.commodities)
+      cv = data.commodities[cn]
+      range = cv/5 #e.g. 25cv = +- 5
+      st.commv[cn] = rnd(cv-range, range*2)
+trade_gui = -> #Generate the trading GUI.
+  b = "<ul>"
+  for cn in Object.keys(this_station().commv)
+    cv = this_station().commv[cn]
+    b += "<li> #{cn}: <span class='#{if cv < data.commodities[cn] then "goodprice" else if cv > data.commodities[cn] then "badprice" else ""}'>#{cv}cr</span>
+    <button #{if cv > game.cr or game.cargo.length == game.cargomax then "disabled " else ""}onclick='buy(\"#{cn}\")'>Buy 1</button>
+    <button #{unless cn in game.cargo then "disabled " else ""}onclick='sell(\"#{cn}\")'>Sell 1</button></li>"
+  b += "</ul>"
 
 display_ship = ->
   $("#yourship").html "
-  #{game.shipname}, your ship <br>
+  #{game.shipname}, your ship (#{game.cr}cr)<br>
   Fuel: #{Math.round(game.fuel*100)/100}&#x2F;#{game.fuelmax} (max dist #{game.range}) <br>
   Cargo (#{game.cargo.length}/#{game.cargomax}):
   <ul id='cargo'> <ul/>
@@ -41,17 +71,15 @@ display_ship = ->
   for i in game.cargo
     j += 1
     $("#cargo").append("<li>#{i} <button onclick='ditch(#{j})'>Ditch</button></li>")
-
 display_station = ->
   current_station = this_station()
   $("#thestation").html "
   Current station: #{current_station.name} <br />
   Location: #{current_station.x}x#{current_station.y}
 
-  <button #{"disabled" unless "R" in current_station.cap} onclick='refuel()'> Refuel </button>
-
+  <button #{unless "R" in current_station.cap then "disabled " else ""} onclick='refuel()'> Refuel </button>
+  #{trade_gui()}
   "
-
 display_stations = ->
   draw.clear()
   j = 0
@@ -89,5 +117,6 @@ display = ->
   display_stations()
 
 $(document).ready ->
+  gen_comv()
   draw = SVG('stations').size(500,500)
   display()
