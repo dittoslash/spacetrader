@@ -18,5 +18,6 @@
   "homepage": "https://github.com/dittoslash/spacetrader#readme",
   "devDependencies": {
     "coffee": "^4.1.0"
-  }
+  },
+  "dependencies": {}
 }

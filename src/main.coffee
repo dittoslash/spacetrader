@@ -7,6 +7,8 @@ game =
   cargo: ["Food"] #strings basically
   cargomax: 5
 
+draw = null
+
 this_station = -> data.stations[game.location]
 
 distance_to = (there) ->
@@ -40,7 +42,6 @@ display_ship = ->
     j += 1
     $("#cargo").append("<li>#{i} <button onclick='ditch(#{j})'>Ditch</button></li>")
 
-
 display_station = ->
   current_station = this_station()
   $("#thestation").html "
@@ -52,21 +53,52 @@ display_station = ->
   "
 
 display_stations = ->
-  $("#stations").html("")
+  draw.clear()
+  j = 0
+
+  us = this_station()
+  usx = us.x*10+100
+  usy = us.y*10+100
+
+  range = draw.circle(game.range*20).center(usx, usy).attr({'fill-opacity': 0, stroke: '#00f'})
+  fuel = draw.circle(game.fuel*20).center(usx, usy).attr({'fill-opacity': 0, stroke: '#0f0'})
+  if game.range > game.fuel then range.attr {'stroke-opacity': 0.3}
+  else fuel.attr {'stroke-opacity': 0.3}
+
+  for i in data.stations
+    d = distance_to(i)
+    x = i.x*10+100
+    y = i.y*10+100
+    s = draw.circle(7).center(x, y)
+
+    s.attr if j == game.location then {fill: "#15c"} else if d <= game.fuel and d <= game.range then {fill: '#1a1'} else {fill: '#111'}
+
+    draw.text(i.name + " (#{d}ly)").move(x+5, y).attr({'fill-opacity': 0.8}).font('size', 10)
+
+    s.station = j
+
+    if j != game.location and d <= game.fuel and d <= game.range
+      s.click ->
+        move_to this.station
+
+    j += 1
+
+
+
+  ###$("#stations").html("")
   j = 0
   for i in data.stations
     d = distance_to(i)
     disabled = if d>game.fuel or d>game.range then "disabled " else ""
     $("#stations").append("<li>#{i.x}x#{i.y} (#{d}ly):
       #{i.name} <button #{disabled}onclick='move_to(#{j})'>Go</button> </li>")
-    j += 1
+    j += 1###
 
 display = ->
   display_ship()
   display_station()
   display_stations()
 
-
 $(document).ready ->
-  console.log data
+  draw = SVG('stations').size(500,500)
   display()
