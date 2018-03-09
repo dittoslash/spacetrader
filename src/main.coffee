@@ -48,7 +48,7 @@ display_station = ->
   Current station: #{current_station.name} <br />
   Location: #{current_station.x}x#{current_station.y}
 
-  <button #{"disabled" unless "refuel" in current_station.cap} onclick='refuel()'> Refuel </button>
+  <button #{"disabled" unless "R" in current_station.cap} onclick='refuel()'> Refuel </button>
 
   "
 
@@ -73,26 +73,15 @@ display_stations = ->
 
     s.attr if j == game.location then {fill: "#15c"} else if d <= game.fuel and d <= game.range then {fill: '#1a1'} else {fill: '#111'}
 
-    draw.text(i.name + " (#{d}ly)").move(x+5, y).attr({'fill-opacity': 0.8}).font('size', 10)
+    str = "#{i.cap} #{i.name} (#{d}ly)"
+    draw.line(x, y, 250, y).attr {'stroke-opacity': 0.5, 'stroke-width': 1}
+    draw.text(str).move(250, y).font('size', 10)
 
     s.station = j
-
     if j != game.location and d <= game.fuel and d <= game.range
       s.click ->
         move_to this.station
-
     j += 1
-
-
-
-  ###$("#stations").html("")
-  j = 0
-  for i in data.stations
-    d = distance_to(i)
-    disabled = if d>game.fuel or d>game.range then "disabled " else ""
-    $("#stations").append("<li>#{i.x}x#{i.y} (#{d}ly):
-      #{i.name} <button #{disabled}onclick='move_to(#{j})'>Go</button> </li>")
-    j += 1###
 
 display = ->
   display_ship()
