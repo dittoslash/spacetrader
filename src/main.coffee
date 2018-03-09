@@ -32,15 +32,15 @@ move_to = (there) -> #Move to a station and consumes fuel. Accepts station ID.
 refuel = -> #Refuels ship (currently for free.)
   game.fuel = game.fuelmax
   display()
-ditch = (id) -> #Ditches cargo. Accepts location of cargo in game.cargo.
-  game.cargo.pop(id)
+ditch = (cn) -> #Ditches cargo. Accepts name of commodity.
+  game.cargo.pop(game.cargo.indexOf(cn))
   display()
 buy = (cn) -> #Buys cargo. Accepts name of commodity.
   game.cr -= this_station().commv[cn]
   game.cargo.push(cn)
   display()
 sell = (cn) -> #Sells cargo. Accepts name of commodity.
-  game.cargo.splice(game.cargo.indexOf(cn), 1)
+  game.cargo.pop(game.cargo.indexOf(cn))
   game.cr += this_station().commv[cn]
   display()
 
@@ -67,10 +67,13 @@ display_ship = ->
   Cargo (#{game.cargo.length}/#{game.cargomax}):
   <ul id='cargo'> <ul/>
   "
-  j = -1
+  cargo_count = {}
   for i in game.cargo
-    j += 1
-    $("#cargo").append("<li>#{i} <button onclick='ditch(#{j})'>Ditch</button></li>")
+    if cargo_count[i] then cargo_count[i] += 1
+    else cargo_count[i] = 1
+  for c in Object.keys(cargo_count)
+    v = cargo_count[c]
+    $("#cargo").append("<li>#{v} #{c} <button onclick='ditch(\"#{c}\")'>Ditch</button></li>")
 display_station = ->
   current_station = this_station()
   $("#thestation").html "
