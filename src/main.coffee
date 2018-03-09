@@ -4,6 +4,8 @@ game =
   fuel: 10
   fuelmax: 10
   range: 5
+  cargo: ["Food"] #strings basically
+  cargomax: 5
 
 this_station = -> data.stations[game.location]
 
@@ -22,12 +24,22 @@ move_to = (there) ->
 refuel = ->
   game.fuel = game.fuelmax
   display()
+ditch = (id) ->
+  game.cargo.pop(id)
+  display()
 
 display_ship = ->
   $("#yourship").html "
-  #{game.shipname}, your ship <br />
-  Fuel: #{ Math.round(game.fuel*100)/100}&#x2F;#{game.fuelmax} (max dist #{game.range})
+  #{game.shipname}, your ship <br>
+  Fuel: #{Math.round(game.fuel*100)/100}&#x2F;#{game.fuelmax} (max dist #{game.range}) <br>
+  Cargo (#{game.cargo.length}/#{game.cargomax}):
+  <ul id='cargo'> <ul/>
   "
+  j = -1
+  for i in game.cargo
+    j += 1
+    $("#cargo").append("<li>#{i} <button onclick='ditch(#{j})'>Ditch</button></li>")
+
 
 display_station = ->
   current_station = this_station()
