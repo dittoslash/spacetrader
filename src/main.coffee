@@ -61,8 +61,9 @@ trade_gui = -> #Generate the trading GUI.
   b += "</ul>"
 
 display_ship = ->
+  $("#yourshiptitle").html "Your Ship, #{game.shipname}"
   $("#yourship").html "
-  #{game.shipname}, your ship (#{game.cr}cr)<br>
+  Balance: #{game.cr}cr <br>
   Fuel: #{Math.round(game.fuel*100)/100}&#x2F;#{game.fuelmax} (max dist #{game.range}) <br>
   Cargo (#{game.cargo.length}/#{game.cargomax}):
   <ul id='cargo'> <ul/>
@@ -77,9 +78,7 @@ display_ship = ->
 display_station = ->
   current_station = this_station()
   $("#thestation").html "
-  Current station: #{current_station.name} <br />
-  Location: #{current_station.x}x#{current_station.y}
-
+  Current station: #{current_station.name} #{current_station.x}x#{current_station.y}<br />
   <button #{unless "R" in current_station.cap then "disabled " else ""} onclick='refuel()'> Refuel </button>
   #{trade_gui()}
   "

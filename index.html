@@ -9,20 +9,36 @@
   <style media="screen">
     span.badprice {color: #f00}
     span.goodprice {color: #0f0}
+    #grid {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      grid-template-columns: 50% 50%;
+      grid-template-rows: 50% 50%;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+    .display {border: 1px solid black; padding: 2em;}
+    #shipdisplay {grid-area: 1 / 1 / 1 / 1}
+    #stationdisplay {grid-area: 2 / 1 / 2 / 1}
+    #mapdisplay {grid-area: 1 / 2 / 3 / 2}
   </style>
 </head>
 <body>
-  <div class="display">
-    <h2>Your Ship</h2>
-    <div id="yourship"></div>
-  </div>
-  <div class="display">
-    <h2>The Station</h2>
-    <div id="thestation"></div>
-  </div>
-  <div class="display">
-    <h2>Stations</h2>
-    <div id="stations"> </div>
+  <div id="grid">
+    <div class="display" id="shipdisplay">
+      <h2 id="yourshiptitle">Your Ship</h2>
+      <div id="yourship"></div>
+    </div>
+    <div class="display" id="stationdisplay">
+      <h2>The Station</h2>
+      <div id="thestation"></div>
+    </div>
+    <div class="display" id="mapdisplay">
+      <h2>Stations</h2>
+      <div id="stations"> </div>
+    </div>
   </div>
 </body>
 </html>
